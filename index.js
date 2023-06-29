@@ -45,34 +45,32 @@ async function updateTopTracks(json) {
 
   const tracks = json.items.map(item => ({
     name: item.name,
-    artist: item.artists.map(artist => artist.name.trim()).join(' & '),
+    artist: item.artists.map(artist => artist.name.trim()).join(' & '), 
+    uri: item.external_urls.spotify ?? ''
   }))
+
   if (!tracks.length) return
 
   const lines = []
-  for (let index = 0; index < Math.min(tracks.length, 10); index++) {
-    let { name, artist } = tracks[index]
+  for (let index = 0; index < Math.min(tracks.length, 6); index++) {
+    let { name, artist, uri } = tracks[index]
     name = truncate(name, 25)
     artist = truncate(artist, 19)
-
-    const line = [
-      name.padEnd(34 + name.length - eaw.length(name)),
-      artist.padStart(20 + artist.length - eaw.length(artist)),
-    ]
-    lines.push(line.join(''))
+    const token = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '  '
+    lines.push(`${token} [${name}](${uri}) - ${artist}`)
   }
-
+  console.log(lines.join('\n'))
   try {
-    const filename = Object.keys(gist.data.files)[0]
-    await octo.gists.update({
-      gist_id,
-      files: {
-        [filename]: {
-          filename: '🎵 My Spotify Top Tracks',
-          content: lines.join('\n'),
-        },
-      },
-    })
+    // const filename = Object.keys(gist.data.files)[0]
+    // await octo.gists.update({
+    //   gist_id,
+    //   files: {
+    //     [filename]: {
+    //       filename: '🎵 My Spotify Top Tracks',
+    //       content: lines.join('\n'),
+    //     },
+    //   },
+    // })
   } catch (error) {
     console.error(
       `spotify-box ran into an issue for updating your gist:\n${error}`
@@ -91,7 +89,7 @@ function truncate(str, len) {
   return str.trim()
 }
 
-;(async () => {
+; (async () => {
   try {
     await main()
   } catch (error) {
