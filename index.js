@@ -45,19 +45,18 @@ async function updateTopTracks(json) {
 
   const tracks = json.items.map(item => ({
     name: item.name,
-    artist: item.artists.map(artist => artist.name.trim()).join(' & '), 
-    uri: item.external_urls.spotify ?? ''
+    artist: item.artists.map(artist => artist.name.trim()).join(' & ')
   }))
 
   if (!tracks.length) return
 
   const lines = []
   for (let index = 0; index < Math.min(tracks.length, 6); index++) {
-    let { name, artist, uri } = tracks[index]
+    let { name, artist} = tracks[index]
     name = truncate(name, 25)
     artist = truncate(artist, 19)
     const token = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '  '
-    lines.push(`${token} [${name}](${uri}) - ${artist}`)
+    lines.push(`${token} ${name} - ${artist}`)
   }
   console.log(lines.join('\n'))
   try {
@@ -66,7 +65,7 @@ async function updateTopTracks(json) {
       gist_id,
       files: {
         [filename]: {
-          filename: '🎵 My Spotify Top Tracks.md',
+          filename: '🎵 My Spotify Top Tracks',
           content: lines.join('\n'),
         },
       },
