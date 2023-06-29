@@ -61,16 +61,16 @@ async function updateTopTracks(json) {
   }
   console.log(lines.join('\n'))
   try {
-    // const filename = Object.keys(gist.data.files)[0]
-    // await octo.gists.update({
-    //   gist_id,
-    //   files: {
-    //     [filename]: {
-    //       filename: '🎵 My Spotify Top Tracks',
-    //       content: lines.join('\n'),
-    //     },
-    //   },
-    // })
+    const filename = Object.keys(gist.data.files)[0]
+    await octo.gists.update({
+      gist_id,
+      files: {
+        [filename]: {
+          filename: '🎵 My Spotify Top Tracks',
+          content: lines.join('\n'),
+        },
+      },
+    })
   } catch (error) {
     console.error(
       `spotify-box ran into an issue for updating your gist:\n${error}`
